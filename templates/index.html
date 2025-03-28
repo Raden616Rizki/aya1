@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYA - Real-Time Object Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <style>
+        body {
+            text-align: center;
+        }
+        video {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>AYA - Real-Time Object Detection</h1>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <script>
+        const video = document.createElement("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.play();
+            return new Promise(resolve => {
+                video.onloadedmetadata = () => {
+                    resolve(video);
+                };
+            });
+        }
+
+        async function detectObjects() {
+            const model = await cocoSsd.load();
+            console.log("Model Loaded");
+
+            async function detectFrame() {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const predictions = await model.detect(video);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                predictions.forEach(prediction => {
+                    const [x, y, width, height] = prediction.bbox;
+                    const text = `${prediction.class} (${Math.round(prediction.score * 100)}%)`;
+
+                    ctx.strokeStyle = "red";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, width, height);
+
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(x, y - 20, ctx.measureText(text).width + 10, 20);
+
+                    ctx.fillStyle = "white";
+                    ctx.font = "16px Arial";
+                    ctx.fillText(text, x + 5, y - 5);
+                });
+
+                requestAnimationFrame(detectFrame);
+            }
+
+            detectFrame();
+        }
+
+        setupCamera().then(detectObjects);
+    </script>
+</body>
+</html>
