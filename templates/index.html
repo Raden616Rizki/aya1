@@ -9,82 +9,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="static/style.css">
     
     <!-- TensorFlow.js & COCO-SSD -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-    
-    <style>
-        body {
-            text-align: center;
-            font-family: 'Outfit', sans-serif;
-            background-color: black;
-            padding: 20px;
-        }
-        h1 {
-            font-weight: 700;
-            color: #333;
-        }
-        canvas {
-            border: 2px solid #000;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
     <h1>Aya1 - Realtime Object Detection</h1>
     <canvas id="canvas" width="640" height="480"></canvas>
 
-    <script>
-        const video = document.createElement("video");
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
+    <div class="switch-container">
+        <span class="switch-label">Front</span>
+        <label class="switch">
+            <input type="checkbox" id="cameraSwitch">
+            <span class="slider"></span>
+        </label>
+        <span class="switch-label">Back</span>
+    </div>
 
-        async function setupCamera() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            video.play();
-            return new Promise(resolve => {
-                video.onloadedmetadata = () => {
-                    resolve(video);
-                };
-            });
-        }
-
-        async function detectObjects() {
-            const model = await cocoSsd.load();
-            console.log("Model Loaded");
-
-            async function detectFrame() {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const predictions = await model.detect(video);
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                predictions.forEach(prediction => {
-                    const [x, y, width, height] = prediction.bbox;
-                    const text = `${prediction.class} (${Math.round(prediction.score * 100)}%)`;
-
-                    ctx.strokeStyle = "red";
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(x, y, width, height);
-
-                    ctx.fillStyle = "black";
-                    ctx.fillRect(x, y - 22, ctx.measureText(text).width + 10, 22);
-
-                    ctx.fillStyle = "white";
-                    ctx.font = "16px 'Outfit', sans-serif";
-                    ctx.fillText(text, x + 5, y - 5);
-                });
-
-                requestAnimationFrame(detectFrame);
-            }
-
-            detectFrame();
-        }
-
-        setupCamera().then(detectObjects);
-    </script>
+    <!-- External JS -->
+    <script src="static/script.js"></script>
 </body>
 </html>
