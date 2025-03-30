@@ -8,17 +8,37 @@ async function setupCamera(facingMode = "user") {
         video.srcObject.getTracks().forEach(track => track.stop());
     }
 
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: facingMode } 
-    });
-    video.srcObject = stream;
-    video.play();
-    return new Promise(resolve => {
-        video.onloadedmetadata = () => {
-            resolve(video);
-        };
-    });
+    try {
+        const constraints = { video: { facingMode: facingMode } };
+
+        if (facingMode === "environment") {
+            constraints.video.facingMode = { exact: "environment" };
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+
+        return new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                video.play();
+                adjustCanvasSize();
+                resolve(video);
+            };
+        });
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        alert("Gagal mengakses kamera. Pastikan izin diberikan.");
+    }
 }
+
+function adjustCanvasSize() {
+    const canvas = document.getElementById("canvas");
+    canvas.width = Math.min(window.innerWidth - 40, 640);
+    canvas.height = (canvas.width / 4) * 3;
+    canvas.style.margin = "0 auto";
+}
+
+window.addEventListener("resize", adjustCanvasSize);
 
 async function detectObjects() {
     const model = await cocoSsd.load();

@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aster - Realtime Object Detection</title>
-    
+
     <!-- Font Google: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- External CSS -->
-    <link rel="stylesheet" href="static/style.css">
-    
+    <link rel="stylesheet" href="static/style.css" />
+
     <!-- TensorFlow.js & COCO-SSD -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Aster - Realtime Object Detection</h1>
-    <canvas id="canvas" width="640" height="480"></canvas>
+    <div class="canvas-container">
+      <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
 
     <div class="switch-container">
-        <span class="switch-label">Front</span>
-        <label class="switch">
-            <input type="checkbox" id="cameraSwitch">
-            <span class="slider"></span>
-        </label>
-        <span class="switch-label">Back</span>
+      <span class="switch-label">Front</span>
+      <label class="switch">
+        <input type="checkbox" id="cameraSwitch" />
+        <span class="slider"></span>
+      </label>
+      <span class="switch-label">Back</span>
     </div>
 
     <!-- External JS -->
     <script src="static/script.js"></script>
-</body>
+  </body>
 </html>
